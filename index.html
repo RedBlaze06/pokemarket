@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Red Blaze PokéMarket</title>
+
+  <style>
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:Arial, Helvetica, sans-serif;
+    }
+
+    body{
+      background:#000;
+      color:white;
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      background:
+        radial-gradient(circle at top right, rgba(255,80,0,0.2), transparent 30%),
+        radial-gradient(circle at bottom left, rgba(255,100,0,0.1), transparent 40%);
+      z-index:-1;
+    }
+
+    .topbar{
+      width:100%;
+      padding:25px 50px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      border-bottom:1px solid rgba(255,120,0,0.2);
+    }
+
+    .owner{
+      font-size:28px;
+      font-weight:bold;
+      color:#ff6a00;
+      text-shadow:0 0 12px #ff5500;
+    }
+
+    .logo{
+      width:130px;
+    }
+
+    .hero{
+      text-align:center;
+      margin:40px 0 50px;
+    }
+
+    .hero h1{
+      font-size:60px;
+      color:#ff5e00;
+      text-shadow:0 0 10px #ff5e00;
+    }
+
+    .cards-container{
+      width:90%;
+      margin:auto;
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+      gap:35px;
+    }
+
+    .pokemon-card{
+      background:#111;
+      border-radius:20px;
+      overflow:hidden;
+      cursor:pointer;
+      border:1px solid rgba(255,100,0,0.25);
+    }
+
+    .card-image img{
+      width:100%;
+      height:320px;
+      object-fit:cover;
+    }
+
+    .card-content{
+      padding:20px;
+    }
+
+    .card-name{
+      font-size:22px;
+      color:#ff6a00;
+    }
+
+    .card-price{
+      margin-top:10px;
+      display:inline-block;
+      background:#ff5e00;
+      padding:6px 12px;
+      border-radius:10px;
+    }
+
+    footer{
+      text-align:center;
+      padding:30px;
+      color:#555;
+    }
+
+    /* MODAL */
+
+    .modal{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.92);
+      display:none;
+      justify-content:center;
+      align-items:center;
+      z-index:999;
+    }
+
+    .modal-content{
+      width:90%;
+      max-width:1000px;
+      background:#111;
+      display:flex;
+      border-radius:20px;
+      overflow:hidden;
+    }
+
+    .modal-image{
+      flex:1;
+      position:relative;
+      height:450px;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+    }
+
+    .modal-image img{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+    }
+
+    .arrow{
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      font-size:40px;
+      cursor:pointer;
+      color:#ff5e00;
+      user-select:none;
+    }
+
+    .arrow.left{ left:10px; }
+    .arrow.right{ right:10px; }
+
+    .modal-info{
+      flex:1;
+      padding:20px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .modal-desc{
+      background:#000;
+      padding:10px;
+      border-radius:10px;
+      white-space:pre-wrap;
+    }
+
+    .seller{
+      margin-top:auto;
+      text-align:right;
+      color:#777;
+    }
+
+  </style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="owner">Osrin P</div>
+  <img class="logo" src="logo_RedBlaze.png">
+</header>
+
+<section class="hero">
+  <h1>Red Blaze PokéMarket</h1>
+</section>
+
+<section class="cards-container">
+
+  <!-- 1 -->
+  <div class="pokemon-card"
+    data-name="Terrapagos EX"
+    data-price="1€"
+    data-front="Terrapagos.jpeg"
+    data-back="dosTerrapagos.jpeg"
+    data-state="Mint"
+    data-desc="Carte Pokémon en très bonne état et sous sleeve depuis l'ouverture du booster.\nExemplaire restant: 1">
+
+    <div class="card-image"><img src="Terrapagos.jpeg"></div>
+    <div class="card-content"><div class="card-name">Terrapagos EX</div><div class="card-price">1€</div></div>
+  </div>
+
+  <!-- 2 -->
+  <div class="pokemon-card"
+    data-name="Mega Momartik EX"
+    data-price="1€"
+    data-front="Momartik.jpeg"
+    data-back="dosMomartik.jpeg"
+    data-state="Mint"
+    data-desc="Carte Pokémon en très bonne état et sous sleeve depuis l'ouverture du booster.\nExemplaire restant: 1">
+
+    <div class="card-image"><img src="Momartik.jpeg"></div>
+    <div class="card-content"><div class="card-name">Mega Momartik EX</div><div class="card-price">1€</div></div>
+  </div>
+
+  <!-- 3 -->
+  <div class="pokemon-card"
+    data-name="Mega Ohmassacre EX"
+    data-price="1€"
+    data-front="Ohmassacre.jpeg"
+    data-back="dosOhmassacre.jpeg"
+    data-state="Mint"
+    data-desc="Carte Pokémon en très bonne état et sous sleeve depuis l'ouverture du booster.\nExemplaire restant: 1">
+
+    <div class="card-image"><img src="Ohmassacre.jpeg"></div>
+    <div class="card-content"><div class="card-name">Mega Ohmassacre EX</div><div class="card-price">1€</div></div>
+  </div>
+
+  <!-- 4 -->
+  <div class="pokemon-card"
+    data-name="Mega Airmure EX"
+    data-price="1€"
+    data-front="Airmure.jpeg"
+    data-back="dosAirmure.jpeg"
+    data-state="Mint"
+    data-desc="Carte Pokémon en très bonne état et sous sleeve depuis l'ouverture du booster.\nExemplaire restant: 1">
+
+    <div class="card-image"><img src="Airmure.jpeg"></div>
+    <div class="card-content"><div class="card-name">Mega Airmure EX</div><div class="card-price">1€</div></div>
+  </div>
+
+  <!-- 5 -->
+  <div class="pokemon-card"
+    data-name="Mega Élecsprint EX"
+    data-price="1€"
+    data-front="Elecsprint.jpeg"
+    data-back="dosElecsprint.jpeg"
+    data-state="Mint"
+    data-desc="Carte Pokémon en très bonne état et sous sleeve depuis l'ouverture du booster.\nExemplaire restant: 1">
+
+    <div class="card-image"><img src="Elecsprint.jpeg"></div>
+    <div class="card-content"><div class="card-name">Mega Élecsprint EX</div><div class="card-price">1€</div></div>
+  </div>
+
+  <!-- 6 -->
+  <div class="pokemon-card"
+    data-name="Mega Mélodelfe EX"
+    data-price="1€"
+    data-front="Melodelfe.jpeg"
+    data-back="dosMelodelfe.jpeg"
+    data-state="Mint"
+    data-desc="Carte Pokémon en très bonne état et sous sleeve depuis l'ouverture du booster.\nExemplaire restant: 1">
+
+    <div class="card-image"><img src="Melodelfe.jpeg"></div>
+    <div class="card-content"><div class="card-name">Mega Mélodelfe EX</div><div class="card-price">1€</div></div>
+  </div>
+
+  <!-- 7 -->
+  <div class="pokemon-card"
+    data-name="Yveltal EX"
+    data-price="1€"
+    data-front="Yveltal.jpeg"
+    data-back="dosYveltal.jpeg"
+    data-state="Mint"
+    data-desc="Carte Pokémon en très bonne état et sous sleeve depuis l'ouverture du booster.\nExemplaire restant: 1\nPokémon légendaire très appréciée">
+
+    <div class="card-image"><img src="Yveltal.jpeg"></div>
+    <div class="card-content"><div class="card-name">Yveltal EX</div><div class="card-price">1€</div></div>
+  </div>
+
+  <!-- 8 -->
+  <div class="pokemon-card"
+    data-name="Archéduc EX"
+    data-price="0,50€"
+    data-front="Archéduc.jpeg"
+    data-back="dosArchéduc.jpeg"
+    data-state="Mint"
+    data-desc="Carte Pokémon en très bonne état et sous sleeve depuis l'ouverture du booster.\nExemplaire restant: 1">
+
+    <div class="card-image"><img src="Archéduc.jpeg"></div>
+    <div class="card-content"><div class="card-name">Archéduc EX</div><div class="card-price">0,50€</div></div>
+  </div>
+
+  <!-- 9 -->
+  <div class="pokemon-card"
+    data-name="Malamandre EX"
+    data-price="0,50€"
+    data-front="Malamandre.jpeg"
+    data-back="dosMalamandre.jpeg"
+    data-state="Mint"
+    data-desc="Carte Pokémon en très bonne état et sous sleeve depuis l'ouverture du booster.\nExemplaire restant: 1">
+
+    <div class="card-image"><img src="Malamandre.jpeg"></div>
+    <div class="card-content"><div class="card-name">Malamandre EX</div><div class="card-price">0,50€</div></div>
+  </div>
+
+</section>
+
+<footer>© 2025 Red Blaze PokéMarket</footer>
+
+<!-- MODAL -->
+<div class="modal" id="modal" onclick="closeModal(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
+
+    <div class="modal-image">
+      <div class="arrow left" onclick="prevImg()">‹</div>
+      <img id="modalImg">
+      <div class="arrow right" onclick="nextImg()">›</div>
+    </div>
+
+    <div class="modal-info">
+      <h2 id="modalName"></h2>
+      <div id="modalPrice"></div>
+      <div id="modalState"></div>
+      <div class="modal-desc" id="modalDesc"></div>
+      <div class="seller">Vendeur : Osrin P</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+
+let images = [];
+let index = 0;
+
+document.querySelectorAll('.pokemon-card').forEach(card => {
+  card.addEventListener('click', () => {
+
+    images = [card.dataset.front, card.dataset.back];
+    index = 0;
+
+    document.getElementById('modalName').innerText = card.dataset.name;
+    document.getElementById('modalPrice').innerText = card.dataset.price;
+    document.getElementById('modalState').innerText = "État : " + card.dataset.state;
+    document.getElementById('modalImg').src = images[index];
+
+    document.getElementById('modalDesc').innerHTML =
+      card.dataset.desc.replace(/\\n/g, "<br>");
+
+    document.getElementById('modal').style.display = "flex";
+  });
+});
+
+function closeModal(e){
+  if(e.target.id === "modal"){
+    document.getElementById("modal").style.display = "none";
+  }
+}
+
+function nextImg(){
+  if(index < images.length - 1){
+    index++;
+    document.getElementById('modalImg').src = images[index];
+  }
+}
+
+function prevImg(){
+  if(index > 0){
+    index--;
+    document.getElementById('modalImg').src = images[index];
+  }
+}
+
+</script>
+
+</body>
+</html>
