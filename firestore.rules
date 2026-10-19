@@ -1,0 +1,50 @@
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isCreator() {
+      return signedIn()
+        && request.auth.uid == "eY4JHfBvRnY9n4J1Viz4PUtfuXv2";
+    }
+
+    match /users/{userId} {
+      allow read: if signedIn()
+        && (request.auth.uid == userId || isCreator());
+
+      allow write: if false;
+    }
+
+    match /usernames/{username} {
+      allow read, write: if false;
+    }
+
+    match /conversations/{customerUid} {
+      allow read: if signedIn()
+        && (request.auth.uid == customerUid || isCreator());
+
+      allow write: if false;
+
+      match /messages/{messageId} {
+        allow read: if signedIn()
+          && (request.auth.uid == customerUid || isCreator());
+
+        allow create: if signedIn()
+          && request.resource.data.senderUid == request.auth.uid
+          && request.resource.data.text is string
+          && request.resource.data.text.size() > 0
+          && request.resource.data.text.size() <= 3000
+          && (
+            request.auth.uid == customerUid
+            || isCreator()
+          );
+
+        allow update, delete: if false;
+      }
+    }
+  }
+}
