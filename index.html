@@ -1,371 +1,781 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Red Blaze PokéMarket</title>
 
   <style>
-
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-      font-family:Arial, Helvetica, sans-serif;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
     }
 
-    body{
-      background:#000;
-      color:white;
-      min-height:100vh;
-      overflow-x:hidden;
+    body {
+      background: #000;
+      color: white;
+      min-height: 100vh;
+      overflow-x: hidden;
     }
 
-    body::before{
-      content:"";
-      position:fixed;
-      inset:0;
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
       background:
-        radial-gradient(circle at top right, rgba(255,80,0,0.2), transparent 30%),
-        radial-gradient(circle at bottom left, rgba(255,100,0,0.1), transparent 40%);
-      z-index:-1;
+        radial-gradient(circle at top right, rgba(255,80,0,.2), transparent 30%),
+        radial-gradient(circle at bottom left, rgba(255,100,0,.1), transparent 40%);
+      z-index: -1;
     }
 
-    .topbar{
-      width:100%;
-      padding:25px 50px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      border-bottom:1px solid rgba(255,120,0,0.2);
+    .topbar {
+      width: 100%;
+      padding: 25px 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      border-bottom: 1px solid rgba(255,120,0,.2);
+      flex-wrap: wrap;
     }
 
-    .owner{
-      font-size:28px;
-      font-weight:bold;
-      color:#ff6a00;
-      text-shadow:0 0 12px #ff5500;
+    .owner {
+      font-size: 28px;
+      font-weight: bold;
+      color: #ff6a00;
+      text-shadow: 0 0 12px #ff5500;
     }
 
-    .logo{
-      width:130px;
+    .logo {
+      width: 130px;
+      max-width: 35%;
+      object-fit: contain;
     }
 
-    .hero{
-      text-align:center;
-      margin:40px 0 50px;
+    button {
+      cursor: pointer;
     }
 
-    .hero h1{
-      font-size:60px;
-      color:#ff5e00;
-      text-shadow:0 0 10px #ff5e00;
+    .action-button {
+      padding: 11px 16px;
+      border: 0;
+      border-radius: 8px;
+      background: #ff6a00;
+      color: white;
+      font-weight: bold;
     }
 
-    .cards-container{
-      width:90%;
-      margin:auto;
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-      gap:35px;
+    .hero {
+      text-align: center;
+      margin: 40px 0 50px;
+      padding: 0 15px;
     }
 
-    .pokemon-card{
-      background:#111;
-      border-radius:20px;
-      overflow:hidden;
-      cursor:pointer;
-      border:1px solid rgba(255,100,0,0.25);
+    .hero h1 {
+      font-size: clamp(32px, 6vw, 60px);
+      color: #ff5e00;
+      text-shadow: 0 0 10px #ff5e00;
     }
 
-    .card-image img{
-      width:100%;
-      height:320px;
-      object-fit:cover;
+    .cards-container {
+      width: 90%;
+      margin: auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 35px;
     }
 
-    .card-content{
-      padding:20px;
+    .pokemon-card {
+      background: #111;
+      border-radius: 20px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 1px solid rgba(255,100,0,.25);
+      transition: transform .2s, border-color .2s;
     }
 
-    .card-name{
-      font-size:22px;
-      color:#ff6a00;
+    .pokemon-card:hover {
+      transform: translateY(-4px);
+      border-color: #ff6a00;
     }
 
-    .card-price{
-      margin-top:10px;
-      display:inline-block;
-      background:#ff5e00;
-      padding:6px 12px;
-      border-radius:10px;
+    .card-image img {
+      width: 100%;
+      height: 320px;
+      object-fit: cover;
     }
 
-    footer{
-      text-align:center;
-      padding:30px;
-      color:#555;
+    .card-content {
+      padding: 20px;
     }
 
-    /* MODAL */
-
-    .modal{
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,0.92);
-      display:none;
-      justify-content:center;
-      align-items:center;
-      z-index:999;
+    .card-name {
+      font-size: 22px;
+      color: #ff6a00;
     }
 
-    .modal-content{
-      width:90%;
-      max-width:1000px;
-      background:#111;
-      display:flex;
-      border-radius:20px;
-      overflow:hidden;
+    .card-price {
+      margin-top: 10px;
+      display: inline-block;
+      background: #ff5e00;
+      padding: 6px 12px;
+      border-radius: 10px;
     }
 
-    .modal-image{
-      flex:1;
-      position:relative;
-      height:450px;
-      display:flex;
-      justify-content:center;
-      align-items:center;
+    footer {
+      text-align: center;
+      padding: 30px;
+      color: #777;
     }
 
-    .modal-image img{
-      width:100%;
-      height:100%;
-      object-fit:contain;
+    /* Connexion et inscription */
+
+    .auth-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      background: #080808;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow-y: auto;
     }
 
-    .arrow{
-      position:absolute;
-      top:50%;
-      transform:translateY(-50%);
-      font-size:40px;
-      cursor:pointer;
-      color:#ff5e00;
-      user-select:none;
+    .auth-box {
+      width: 100%;
+      max-width: 420px;
+      background: #111;
+      border: 1px solid #ff6a00;
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 0 30px #ff5e0033;
     }
 
-    .arrow.left{ left:10px; }
-    .arrow.right{ right:10px; }
-
-    .modal-info{
-      flex:1;
-      padding:20px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
+    .auth-box h2 {
+      color: #ff6a00;
+      text-align: center;
+      margin-bottom: 12px;
     }
 
-    .modal-desc{
-      background:#000;
-      padding:10px;
-      border-radius:10px;
-      white-space:pre-wrap;
+    .auth-box p {
+      text-align: center;
+      color: #bbb;
+      margin: 14px 0;
+      line-height: 1.5;
     }
 
-    .seller{
-      margin-top:auto;
-      text-align:right;
-      color:#777;
+    .auth-box input {
+      width: 100%;
+      padding: 13px;
+      margin: 7px 0;
+      border: 1px solid #444;
+      border-radius: 8px;
+      background: #080808;
+      color: white;
     }
 
+    .auth-box button {
+      width: 100%;
+      padding: 13px;
+      margin-top: 10px;
+      border: 0;
+      border-radius: 8px;
+      background: #ff6a00;
+      color: white;
+      font-weight: bold;
+    }
+
+    .auth-box button.secondary {
+      background: #292929;
+    }
+
+    #authMessage {
+      color: #ff9b55;
+      overflow-wrap: anywhere;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    /* Fenêtre de détails d'une carte */
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.92);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+      padding: 15px;
+    }
+
+    .modal-content {
+      width: 100%;
+      max-width: 1000px;
+      max-height: 90vh;
+      background: #111;
+      display: flex;
+      border-radius: 20px;
+      overflow: auto;
+    }
+
+    .modal-image {
+      flex: 1;
+      min-width: 0;
+      position: relative;
+      height: 450px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 40px;
+      cursor: pointer;
+      color: #ff5e00;
+      user-select: none;
+      padding: 8px;
+    }
+
+    .arrow.left {
+      left: 5px;
+    }
+
+    .arrow.right {
+      right: 5px;
+    }
+
+    .modal-info {
+      flex: 1;
+      min-width: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .modal-info h2 {
+      color: #ff6a00;
+    }
+
+    .modal-desc {
+      background: #000;
+      padding: 10px;
+      border-radius: 10px;
+      white-space: pre-wrap;
+      line-height: 1.5;
+    }
+
+    .seller {
+      margin-top: auto;
+      padding-top: 20px;
+      text-align: right;
+      color: #999;
+    }
+
+    @media (max-width: 650px) {
+      .topbar {
+        padding: 18px;
+      }
+
+      .owner {
+        font-size: 22px;
+      }
+
+      .cards-container {
+        grid-template-columns: 1fr;
+        width: 92%;
+      }
+
+      .modal-content {
+        flex-direction: column;
+      }
+
+      .modal-image {
+        flex: none;
+        height: 300px;
+      }
+
+      .modal-info {
+        flex: none;
+      }
+    }
   </style>
 </head>
 
 <body>
 
-<header class="topbar">
-  <div class="owner">Osrin P</div>
-  <img class="logo" src="logo_RedBlaze.png">
-</header>
+  <!-- Écran de connexion -->
+  <div class="auth-overlay" id="authOverlay">
+    <div class="auth-box">
+      <h2>Red Blaze PokéMarket</h2>
+      <p>Connecte-toi pour accéder à la marketplace.</p>
 
-<section class="hero">
-  <h1>Red Blaze PokéMarket</h1>
-</section>
+      <form id="loginForm">
+        <input
+          id="loginUsername"
+          placeholder="Ton pseudo"
+          autocomplete="username"
+          minlength="3"
+          maxlength="20"
+          required
+        >
 
-<section class="cards-container">
+        <input
+          id="loginPassword"
+          type="password"
+          placeholder="Ton mot de passe"
+          autocomplete="current-password"
+          required
+        >
 
-  <!-- 2 -->
-  <div class="pokemon-card"
-    data-name="Mega Momartik EX (m2a)"
-    data-price="1,50€"
-    data-front="Momartik.jpeg"
-    data-back="dosMomartik.jpeg"
-    data-state="Mint"
-    data-desc="Carte Pokémon en très bonne état et sous sleeve depuis l'ouverture du booster.\nExemplaire restant: 1">
+        <button type="submit">Se connecter</button>
+      </form>
 
-    <div class="card-image"><img src="Momartik.jpeg"></div>
-    <div class="card-content"><div class="card-name">Mega Momartik EX (m2a)</div><div class="card-price">1,50€</div></div>
+      <button class="secondary" id="showRegister" type="button">
+        Créer un compte
+      </button>
+
+      <form id="registerForm" hidden>
+        <input
+          id="registerUsername"
+          placeholder="Choisis un pseudo"
+          autocomplete="username"
+          minlength="3"
+          maxlength="20"
+          required
+        >
+
+        <input
+          id="registerFirstName"
+          placeholder="Ton prénom"
+          autocomplete="given-name"
+          maxlength="40"
+          required
+        >
+
+        <input
+          id="registerPassword"
+          type="password"
+          placeholder="Mot de passe (8 caractères minimum)"
+          autocomplete="new-password"
+          minlength="8"
+          maxlength="128"
+          required
+        >
+
+        <button type="submit">Créer mon compte</button>
+
+        <button class="secondary" id="showLogin" type="button">
+          Retour à la connexion
+        </button>
+      </form>
+
+      <p id="authMessage" role="status" aria-live="polite"></p>
+    </div>
   </div>
 
-  <!-- 3 -->
-  <div class="pokemon-card"
-    data-name="Mega Ohmassacre EX (m2a)"
-    data-price="2€"
-    data-front="Ohmassacre.jpeg"
-    data-back="dosOhmassacre.jpeg"
-    data-state="Mint"
-    data-desc="Carte Pokémon en très bonne état et sous sleeve depuis l'ouverture du booster.\nExemplaire restant: 1">
+  <!-- En-tête -->
+  <header class="topbar">
+    <div class="owner">Osrin P</div>
+    <img class="logo" src="logo_RedBlaze.png" alt="Logo Red Blaze">
 
-    <div class="card-image"><img src="Ohmassacre.jpeg"></div>
-    <div class="card-content"><div class="card-name">Mega Ohmassacre EX (m2a)</div><div class="card-price">2€</div></div>
-  </div>
+    <button id="logoutButton" class="action-button" hidden>
+      Se déconnecter
+    </button>
+  </header>
 
-  <!-- 4 -->
-  <div class="pokemon-card"
-    data-name="Mega Airmure EX (m3)"
-    data-price="1,50€"
-    data-front="Airmure.jpeg"
-    data-back="dosAirmure.jpeg"
-    data-state="Mint"
-    data-desc="Carte Pokémon en très bonne état et sous sleeve depuis l'ouverture du booster.\nExemplaire restant: 2">
+  <!-- Marketplace -->
+  <section class="hero">
+    <h1>Red Blaze PokéMarket</h1>
+  </section>
 
-    <div class="card-image"><img src="Airmure.jpeg"></div>
-    <div class="card-content"><div class="card-name">Mega Airmure EX (m3)</div><div class="card-price">1,50€</div></div>
-  </div>
+  <section class="cards-container">
 
-  <!-- 5 -->
-  <div class="pokemon-card"
-    data-name="Mega Élecsprint EX (m1S)"
-    data-price="3€"
-    data-front="Elecsprint.jpeg"
-    data-back="dosElecsprint.jpeg"
-    data-state="Mint"
-    data-desc="Carte Pokémon en très bonne état et sous sleeve depuis l'ouverture du booster.\nExemplaire restant: 1">
-
-    <div class="card-image"><img src="Elecsprint.jpeg"></div>
-    <div class="card-content"><div class="card-name">Mega Élecsprint EX (m1S)</div><div class="card-price">3€</div></div>
-  </div>
-
-  <!-- 6 -->
-  <div class="pokemon-card"
-    data-name="Mega Mélodelfe EX (m3)"
-    data-price="1,50€"
-    data-front="Melodelfe.jpeg"
-    data-back="dosMélodelfe.jpeg"
-    data-state="Mint"
-    data-desc="Carte Pokémon en très bonne état et sous sleeve depuis l'ouverture du booster.\nExemplaire restant: 1">
-
-    <div class="card-image"><img src="Melodelfe.jpeg"></div>
-    <div class="card-content"><div class="card-name">Mega Mélodelfe EX (m3)</div><div class="card-price">1,50€</div></div>
-  </div>
-
-  <!-- 7 -->
-  <div class="pokemon-card"
-    data-name="Yveltal EX (m3)"
-    data-price="1,50€"
-    data-front="Yveltal.jpeg"
-    data-back="dosYveltal.jpeg"
-    data-state="Mint"
-    data-desc="Carte Pokémon en très bonne état et sous sleeve depuis l'ouverture du booster.\nExemplaire restant: 1\nPokémon légendaire très appréciée">
-
-    <div class="card-image"><img src="Yveltal.jpeg"></div>
-    <div class="card-content"><div class="card-name">Yveltal EX (m3)</div><div class="card-price">1,50€</div></div>
-  </div>
-
-  <!-- 8 -->
-  <div class="pokemon-card"
-    data-name="Archéduc EX (m3)"
-    data-price="1€"
-    data-front="Archéduc.jpeg"
-    data-back="dosArchéduc.jpeg"
-    data-state="Mint"
-    data-desc="Carte Pokémon en très bonne état et sous sleeve depuis l'ouverture du booster.\nExemplaire restant: 1">
-
-    <div class="card-image"><img src="Archéduc.jpeg"></div>
-    <div class="card-content"><div class="card-name">Archéduc EX (m3)</div><div class="card-price">1€</div></div>
-  </div>
-
-  <!-- 9 -->
-  <div class="pokemon-card"
-    data-name="Malamandre EX (m3)"
-    data-price="1,20€"
-    data-front="Malamandre.jpeg"
-    data-back="dosMalamandre.jpeg"
-    data-state="Mint"
-    data-desc="Carte Pokémon en très bonne état et sous sleeve depuis l'ouverture du booster.\nExemplaire restant: 2">
-
-    <div class="card-image"><img src="Malamandre.jpeg"></div>
-    <div class="card-content"><div class="card-name">Malamandre EX (m3)</div><div class="card-price">1,20€</div></div>
-  </div>
-
-</section>
-
-<footer>© 2026 Red Blaze PokéMarket</footer>
-
-<!-- MODAL -->
-<div class="modal" id="modal" onclick="closeModal(event)">
-  <div class="modal-content" onclick="event.stopPropagation()">
-
-    <div class="modal-image">
-      <div class="arrow left" onclick="prevImg()">‹</div>
-      <img id="modalImg">
-      <div class="arrow right" onclick="nextImg()">›</div>
+    <div class="pokemon-card"
+      data-name="Mega Momartik EX (m2a)"
+      data-price="1,50€"
+      data-front="Momartik.jpeg"
+      data-back="dosMomartik.jpeg"
+      data-state="Mint"
+      data-desc="Carte Pokémon en très bon état et sous sleeve depuis l'ouverture du booster.\nExemplaire restant : 1">
+      <div class="card-image">
+        <img src="Momartik.jpeg" alt="Mega Momartik EX">
+      </div>
+      <div class="card-content">
+        <div class="card-name">Mega Momartik EX (m2a)</div>
+        <div class="card-price">1,50€</div>
+      </div>
     </div>
 
-    <div class="modal-info">
-      <h2 id="modalName"></h2>
-      <div id="modalPrice"></div>
-      <div id="modalState"></div>
-      <div class="modal-desc" id="modalDesc"></div>
-      <div class="seller">Vendeur : Osrin P</div>
+    <div class="pokemon-card"
+      data-name="Mega Ohmassacre EX (m2a)"
+      data-price="2€"
+      data-front="Ohmassacre.jpeg"
+      data-back="dosOhmassacre.jpeg"
+      data-state="Mint"
+      data-desc="Carte Pokémon en très bon état et sous sleeve depuis l'ouverture du booster.\nExemplaire restant : 1">
+      <div class="card-image">
+        <img src="Ohmassacre.jpeg" alt="Mega Ohmassacre EX">
+      </div>
+      <div class="card-content">
+        <div class="card-name">Mega Ohmassacre EX (m2a)</div>
+        <div class="card-price">2€</div>
+      </div>
     </div>
 
+    <div class="pokemon-card"
+      data-name="Mega Airmure EX (m3)"
+      data-price="1,50€"
+      data-front="Airmure.jpeg"
+      data-back="dosAirmure.jpeg"
+      data-state="Mint"
+      data-desc="Carte Pokémon en très bon état et sous sleeve depuis l'ouverture du booster.\nExemplaire restant : 2">
+      <div class="card-image">
+        <img src="Airmure.jpeg" alt="Mega Airmure EX">
+      </div>
+      <div class="card-content">
+        <div class="card-name">Mega Airmure EX (m3)</div>
+        <div class="card-price">1,50€</div>
+      </div>
+    </div>
+
+    <div class="pokemon-card"
+      data-name="Mega Élecsprint EX (m1S)"
+      data-price="3€"
+      data-front="Elecsprint.jpeg"
+      data-back="dosElecsprint.jpeg"
+      data-state="Mint"
+      data-desc="Carte Pokémon en très bon état et sous sleeve depuis l'ouverture du booster.\nExemplaire restant : 1">
+      <div class="card-image">
+        <img src="Elecsprint.jpeg" alt="Mega Élecsprint EX">
+      </div>
+      <div class="card-content">
+        <div class="card-name">Mega Élecsprint EX (m1S)</div>
+        <div class="card-price">3€</div>
+      </div>
+    </div>
+
+    <div class="pokemon-card"
+      data-name="Mega Mélodelfe EX (m3)"
+      data-price="1,50€"
+      data-front="Melodelfe.jpeg"
+      data-back="dosMélodelfe.jpeg"
+      data-state="Mint"
+      data-desc="Carte Pokémon en très bon état et sous sleeve depuis l'ouverture du booster.\nExemplaire restant : 1">
+      <div class="card-image">
+        <img src="Melodelfe.jpeg" alt="Mega Mélodelfe EX">
+      </div>
+      <div class="card-content">
+        <div class="card-name">Mega Mélodelfe EX (m3)</div>
+        <div class="card-price">1,50€</div>
+      </div>
+    </div>
+
+    <div class="pokemon-card"
+      data-name="Yveltal EX (m3)"
+      data-price="1,50€"
+      data-front="Yveltal.jpeg"
+      data-back="dosYveltal.jpeg"
+      data-state="Mint"
+      data-desc="Carte Pokémon en très bon état et sous sleeve depuis l'ouverture du booster.\nExemplaire restant : 1\nPokémon légendaire très apprécié">
+      <div class="card-image">
+        <img src="Yveltal.jpeg" alt="Yveltal EX">
+      </div>
+      <div class="card-content">
+        <div class="card-name">Yveltal EX (m3)</div>
+        <div class="card-price">1,50€</div>
+      </div>
+    </div>
+
+    <div class="pokemon-card"
+      data-name="Archéduc EX (m3)"
+      data-price="1€"
+      data-front="Archéduc.jpeg"
+      data-back="dosArchéduc.jpeg"
+      data-state="Mint"
+      data-desc="Carte Pokémon en très bon état et sous sleeve depuis l'ouverture du booster.\nExemplaire restant : 1">
+      <div class="card-image">
+        <img src="Archéduc.jpeg" alt="Archéduc EX">
+      </div>
+      <div class="card-content">
+        <div class="card-name">Archéduc EX (m3)</div>
+        <div class="card-price">1€</div>
+      </div>
+    </div>
+
+    <div class="pokemon-card"
+      data-name="Malamandre EX (m3)"
+      data-price="1,20€"
+      data-front="Malamandre.jpeg"
+      data-back="dosMalamandre.jpeg"
+      data-state="Mint"
+      data-desc="Carte Pokémon en très bon état et sous sleeve depuis l'ouverture du booster.\nExemplaire restant : 2">
+      <div class="card-image">
+        <img src="Malamandre.jpeg" alt="Malamandre EX">
+      </div>
+      <div class="card-content">
+        <div class="card-name">Malamandre EX (m3)</div>
+        <div class="card-price">1,20€</div>
+      </div>
+    </div>
+
+  </section>
+
+  <footer>© 2026 Red Blaze PokéMarket</footer>
+
+  <!-- Fenêtre de détails d'une carte -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <div class="modal-image">
+        <button class="arrow left" id="prevImage" aria-label="Image précédente">‹</button>
+        <img id="modalImg" alt="Image de la carte">
+        <button class="arrow right" id="nextImage" aria-label="Image suivante">›</button>
+      </div>
+
+      <div class="modal-info">
+        <h2 id="modalName"></h2>
+        <div id="modalPrice"></div>
+        <div id="modalState"></div>
+        <div class="modal-desc" id="modalDesc"></div>
+        <div class="seller">Vendeur : Osrin P</div>
+        <button class="action-button" id="closeModal">Fermer</button>
+      </div>
+    </div>
   </div>
-</div>
 
-<script>
+  <!-- Gestion des cartes -->
+  <script>
+    let images = [];
+    let imageIndex = 0;
 
-let images = [];
-let index = 0;
+    const modal = document.getElementById("modal");
 
-document.querySelectorAll('.pokemon-card').forEach(card => {
-  card.addEventListener('click', () => {
+    document.querySelectorAll(".pokemon-card").forEach(card => {
+      card.addEventListener("click", () => {
+        images = [card.dataset.front, card.dataset.back];
+        imageIndex = 0;
 
-    images = [card.dataset.front, card.dataset.back];
-    index = 0;
+        document.getElementById("modalName").textContent = card.dataset.name;
+        document.getElementById("modalPrice").textContent = card.dataset.price;
+        document.getElementById("modalState").textContent =
+          "État : " + card.dataset.state;
 
-    document.getElementById('modalName').innerText = card.dataset.name;
-    document.getElementById('modalPrice').innerText = card.dataset.price;
-    document.getElementById('modalState').innerText = "État : " + card.dataset.state;
-    document.getElementById('modalImg').src = images[index];
+        document.getElementById("modalImg").src = images[imageIndex];
 
-    document.getElementById('modalDesc').innerHTML =
-      card.dataset.desc.replace(/\\n/g, "<br>");
+        // Afficher la description comme du texte, sans interpréter du HTML.
+        document.getElementById("modalDesc").textContent =
+          card.dataset.desc.replace(/\\n/g, "\n");
 
-    document.getElementById('modal').style.display = "flex";
-  });
-});
+        modal.style.display = "flex";
+      });
+    });
 
-function closeModal(e){
-  if(e.target.id === "modal"){
-    document.getElementById("modal").style.display = "none";
-  }
-}
+    function closeModal() {
+      modal.style.display = "none";
+    }
 
-function nextImg(){
-  if(index < images.length - 1){
-    index++;
-    document.getElementById('modalImg').src = images[index];
-  }
-}
+    function showImage(direction) {
+      imageIndex = Math.max(
+        0,
+        Math.min(images.length - 1, imageIndex + direction)
+      );
 
-function prevImg(){
-  if(index > 0){
-    index--;
-    document.getElementById('modalImg').src = images[index];
-  }
-}
+      if (images.length) {
+        document.getElementById("modalImg").src = images[imageIndex];
+      }
+    }
 
-</script>
+    document.getElementById("prevImage").addEventListener("click", () => {
+      showImage(-1);
+    });
+
+    document.getElementById("nextImage").addEventListener("click", () => {
+      showImage(1);
+    });
+
+    document.getElementById("closeModal").addEventListener("click", closeModal);
+
+    modal.addEventListener("click", event => {
+      if (event.target === modal) closeModal();
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") closeModal();
+    });
+  </script>
+
+  <!-- Firebase : connexion et inscription -->
+  <script type="module">
+    import { initializeApp } from
+      "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+
+    import {
+      getAuth,
+      signInWithEmailAndPassword,
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCBhAeBvEK93c2CD2jCAY_YaQNDVaq1Q3M",
+      authDomain: "pokemarket-63a1c.firebaseapp.com",
+      projectId: "pokemarket-63a1c",
+      storageBucket: "pokemarket-63a1c.firebasestorage.app",
+      messagingSenderId: "389097135172",
+      appId: "1:389097135172:web:4f6bd263b195ebe7ebb011",
+      measurementId: "G-VX8H06M08J"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const overlay = document.getElementById("authOverlay");
+    const loginForm = document.getElementById("loginForm");
+    const registerForm = document.getElementById("registerForm");
+    const message = document.getElementById("authMessage");
+    const logoutButton = document.getElementById("logoutButton");
+
+    function normalizeUsername(value) {
+      return value
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, ".");
+    }
+
+    document.getElementById("showRegister").addEventListener("click", () => {
+      loginForm.hidden = true;
+      registerForm.hidden = false;
+      message.textContent = "";
+    });
+
+    document.getElementById("showLogin").addEventListener("click", () => {
+      registerForm.hidden = true;
+      loginForm.hidden = false;
+      message.textContent = "";
+    });
+
+    loginForm.addEventListener("submit", async event => {
+      event.preventDefault();
+      message.textContent = "Connexion en cours…";
+
+      const username = normalizeUsername(
+        document.getElementById("loginUsername").value
+      );
+
+      const password = document.getElementById("loginPassword").value;
+
+      if (!/^[a-z0-9._-]{3,20}$/.test(username)) {
+        message.textContent = "Vérifie le format de ton pseudo.";
+        return;
+      }
+
+      try {
+        const email = `${username}@pokemarket-63a1c.firebaseapp.com`;
+
+        await signInWithEmailAndPassword(auth, email, password);
+        message.textContent = "";
+      } catch (error) {
+        console.error("Erreur de connexion :", error.code);
+        message.textContent = "Pseudo ou mot de passe incorrect.";
+      }
+    });
+
+    registerForm.addEventListener("submit", async event => {
+      event.preventDefault();
+      message.textContent = "Création du compte en cours…";
+
+      const username =
+        document.getElementById("registerUsername").value.trim();
+
+      const firstName =
+        document.getElementById("registerFirstName").value.trim();
+
+      const password =
+        document.getElementById("registerPassword").value;
+
+      const normalized = normalizeUsername(username);
+
+      if (!/^[a-z0-9._-]{3,20}$/.test(normalized)) {
+        message.textContent =
+          "Le pseudo doit contenir 3 à 20 caractères : lettres sans accents, chiffres, points, tirets ou underscores.";
+        return;
+      }
+
+      if (normalized === "osrin.legoat") {
+        message.textContent = "Ce pseudo est réservé.";
+        return;
+      }
+
+      if (password.length < 8) {
+        message.textContent =
+          "Le mot de passe doit contenir au moins 8 caractères.";
+        return;
+      }
+
+      try {
+        const response = await fetch("/api/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            username,
+            firstName,
+            password
+          })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || "Inscription impossible.");
+        }
+
+        registerForm.reset();
+        registerForm.hidden = true;
+        loginForm.hidden = false;
+
+        document.getElementById("loginUsername").value = username;
+        message.textContent =
+          "Compte créé ! Tu peux maintenant te connecter.";
+      } catch (error) {
+        message.textContent =
+          error.message || "Erreur lors de l'inscription.";
+      }
+    });
+
+    logoutButton.addEventListener("click", async () => {
+      try {
+        await signOut(auth);
+        message.textContent = "";
+      } catch {
+        message.textContent = "Déconnexion impossible. Réessaie.";
+      }
+    });
+
+    onAuthStateChanged(auth, user => {
+      overlay.style.display = user ? "none" : "flex";
+      logoutButton.hidden = !user;
+    });
+  </script>
 
 </body>
 </html>
+
