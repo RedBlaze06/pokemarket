@@ -686,16 +686,26 @@
         return;
       }
 
-      try {
-        const email = `${username}@pokemarket-63a1c.firebaseapp.com`;
+  function normalizeUsername(value) {
+    return value
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, ".");
+  }
 
-        await signInWithEmailAndPassword(auth, email, password);
-        message.textContent = "";
-      } catch (error) {
-        console.error("Erreur de connexion :", error.code);
-        message.textContent = "Pseudo ou mot de passe incorrect.";
-      }
-    });
+  try {
+    const normalizedUsername = normalizeUsername(username);
+    const email = `${normalizedUsername}@pokemarket-63a1c.firebaseapp.com`;
+
+    await signInWithEmailAndPassword(auth, email, password);
+    message.textContent = "";
+  } catch (error) {
+    console.error("Erreur de connexion :", error.code);
+    message.textContent = "Pseudo ou mot de passe incorrect.";
+  }
+});
 
     registerForm.addEventListener("submit", async event => {
       event.preventDefault();
